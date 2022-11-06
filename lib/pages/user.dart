@@ -26,15 +26,18 @@ class _UserPage extends State<UserPage> {
 
   @override
   void initState() {
-    get();
+    // // get();
   }
 
-  void get() async {
-    listUsers = await FetchUsers().fetchUsers();
-    setState(() {});
+  Future<List<User>> get() async {
+    return await FetchUsers().fetchUsers();
   }
 
   void getPost(User user) async {
+    Navigator.pushNamed(context, '/post');
+    listUsersPost = await FetchUsers().fetchUserPosts(user.id);
+    postServices.setName(user.name);
+    postServices.setPost(listUsersPost);
     setState(() {});
   }
 
@@ -68,17 +71,42 @@ class _UserPage extends State<UserPage> {
                   },
                 ),
               ),
-              Expanded(
-                child: ListView.builder(
-                  cacheExtent: 0,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 17, vertical: 20),
-                  itemCount: listUsers.length,
-                  itemBuilder: (context, index) => AnimatedScrollViewItem(
-                    child:
-                        UsersCardItem(users: listUsers[index], onPost: getPost),
-                  ),
-                ),
+              FutureBuilder(
+                future: get(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 400.0,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      return Expanded(
+                        child: ListView.builder(
+                          cacheExtent: 0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 17, vertical: 20),
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) =>
+                              AnimatedScrollViewItem(
+                            child: UsersCardItem(
+                                users: snapshot.data![index], onPost: getPost),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const SizedBox(
+                        height: 400.0,
+                        child: Center(
+                          child: Text('List is empty'),
+                        ),
+                      );
+                    }
+                  }
+                },
               ),
             ],
           ),
