@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/users',
       routes: {
         '/users': (_) => const UserPage(),
+        '/post': (_) => const PostPage(),
       },
     );
   }
