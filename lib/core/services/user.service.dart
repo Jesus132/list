@@ -1,17 +1,20 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:list/core/models/post.model.dart';
 import 'package:list/core/models/user.model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FetchUsers {
+  static List<User> getUsers(SharedPreferences storage) {
+    final users = storage.getString('users') ?? '[]';
+    return userFromJson(users);
+  }
+
   Future<List<User>> fetchUsers() async {
     late List<User> listUsers = [];
     SharedPreferences storage = await SharedPreferences.getInstance();
-    listUsers = await getUsers(storage);
+    listUsers = getUsers(storage);
 
     if (listUsers.isEmpty) {
       try {
@@ -58,9 +61,16 @@ class FetchUsers {
       // response = await rootBundle.loadString('assets/Users.json');
     }
   }
+}
 
-  static Future<List<User>> getUsers(SharedPreferences storage) async {
-    final users = await storage.getString('users') ?? '[]';
-    return userFromJson(users);
+class _UserServices {
+  late User user;
+
+  User get getUser => user;
+
+  void setUser(User user) {
+    this.user = user;
   }
 }
+
+final userServices = _UserServices();

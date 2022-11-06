@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:list/core/models/post.model.dart';
 import 'package:list/core/models/user.model.dart';
 import 'package:list/core/services/user.service.dart';
-import 'package:list/core/services/post.services.dart';
 import 'package:list/core/widgets/card-list.dart';
 import 'package:list/core/widgets/users-card-item.dart';
 
@@ -19,26 +18,42 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPage extends State<UserPage> {
-  _UserPage();
-
+  late Future<List<User>> _future;
   late List<User> listUsers = [];
-  late List<Post> listUsersPost = [];
+  late List<User> _listUsers = [];
+
+  _UserPage();
 
   @override
   void initState() {
-    // // get();
+    super.initState();
+    _future = get();
   }
 
   Future<List<User>> get() async {
-    return await FetchUsers().fetchUsers();
+    listUsers = await FetchUsers().fetchUsers();
+    _listUsers = listUsers;
+    return listUsers;
   }
 
   void getPost(User user) async {
+    userServices.setUser(user);
     Navigator.pushNamed(context, '/post');
-    listUsersPost = await FetchUsers().fetchUserPosts(user.id);
-    postServices.setName(user.name);
-    postServices.setPost(listUsersPost);
     setState(() {});
+  }
+
+  void filter(String text) {
+    List<User> result = [];
+    if (text.isEmpty) {
+      result = _listUsers;
+    } else {
+      result = _listUsers
+          .where((item) => item.name.toLowerCase().contains(text.toLowerCase()))
+          .toList();
+    }
+    setState(() {
+      listUsers = result;
+    });
   }
 
   @override
@@ -61,18 +76,11 @@ class _UserPage extends State<UserPage> {
                   decoration: const InputDecoration(
                     labelText: 'Buscar usuario',
                   ),
-                  onChanged: (text) {
-                    listUsers = listUsers
-                        .where((item) => item.name
-                            .toLowerCase()
-                            .contains(text.toLowerCase()))
-                        .toList();
-                    setState(() {});
-                  },
+                  onChanged: ((text) => filter(text)),
                 ),
               ),
               FutureBuilder(
-                future: get(),
+                future: _future,
                 builder:
                     (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -89,11 +97,11 @@ class _UserPage extends State<UserPage> {
                           cacheExtent: 0,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 17, vertical: 20),
-                          itemCount: snapshot.data!.length,
+                          itemCount: listUsers.length,
                           itemBuilder: (context, index) =>
                               AnimatedScrollViewItem(
                             child: UsersCardItem(
-                                users: snapshot.data![index], onPost: getPost),
+                                users: listUsers[index], onPost: getPost),
                           ),
                         ),
                       );
