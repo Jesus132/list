@@ -19,11 +19,11 @@ class PostsCardItem extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.withOpacity(0.5),
             offset: const Offset(
-              5.0,
-              5.0,
+              0,
+              10.0,
             ),
-            blurRadius: 10.0,
-            spreadRadius: 2.0,
+            blurRadius: 2.0,
+            spreadRadius: 1.0,
           ),
           const BoxShadow(
             color: Colors.white,
@@ -34,7 +34,6 @@ class PostsCardItem extends StatelessWidget {
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -47,9 +46,13 @@ class PostsCardItem extends StatelessWidget {
               ),
             ),
           ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Text(post.body),
+          const SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Text(post.body),
+            ),
           ),
         ],
       ),
