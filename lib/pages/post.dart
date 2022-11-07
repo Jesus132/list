@@ -14,45 +14,85 @@ class PostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: get(),
-      builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            height: 400.0,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        } else {
-          if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(userServices.getUser.name),
-              ),
-              body: SafeArea(
-                bottom: false,
-                child: ListView.builder(
-                  cacheExtent: 0,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 17, vertical: 20),
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (context, index) => AnimatedScrollViewItem(
-                    child: PostsCardItem(post: snapshot.data![index]),
-                  ),
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(userServices.getUser.name),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Icon(
+                      Icons.mail,
+                      color: Colors.green[900],
+                      size: 24.0,
+                      semanticLabel: 'Text to announce in accessibility modes',
+                    ),
+                    Text(userServices.getUser.email),
+                  ],
                 ),
               ),
-            );
-          } else {
-            return const SizedBox(
-              height: 400.0,
-              child: Center(
-                child: Text('Post is empty'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.phone,
+                      color: Colors.green[900],
+                      size: 24.0,
+                      semanticLabel: 'Text to announce in accessibility modes',
+                    ),
+                    Text(userServices.getUser.phone),
+                  ],
+                ),
               ),
-            );
-          }
-        }
-      },
-    );
+              const SizedBox(
+                height: 10,
+              ),
+              FutureBuilder(
+                future: get(),
+                builder:
+                    (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 400.0,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else {
+                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      return Expanded(
+                        child: ListView.builder(
+                          cacheExtent: 0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 20),
+                          itemCount: snapshot.data?.length,
+                          itemBuilder: (context, index) =>
+                              AnimatedScrollViewItem(
+                            child: PostsCardItem(post: snapshot.data![index]),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const SizedBox(
+                        height: 400.0,
+                        child: Center(
+                          child: Text('Post is empty'),
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+        ));
   }
 }

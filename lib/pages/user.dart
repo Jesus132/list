@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:list/core/models/post.model.dart';
 import 'package:list/core/models/user.model.dart';
 import 'package:list/core/services/user.service.dart';
 import 'package:list/core/widgets/card-list.dart';
@@ -91,7 +90,7 @@ class _UserPage extends State<UserPage> {
                       ),
                     );
                   } else {
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    if (snapshot.hasData && listUsers.isNotEmpty) {
                       return Expanded(
                         child: ListView.builder(
                           cacheExtent: 0,

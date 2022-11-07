@@ -40,9 +40,6 @@ class FetchUsers {
   }
 
   fetchUserPosts(int id) async {
-    late List<Post> listUserPosts = [];
-    SharedPreferences storage = await SharedPreferences.getInstance();
-
     try {
       final res = await http
           .get(
@@ -58,7 +55,6 @@ class FetchUsers {
       }
     } catch (e) {
       return [];
-      // response = await rootBundle.loadString('assets/Users.json');
     }
   }
 }

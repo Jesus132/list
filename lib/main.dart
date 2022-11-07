@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:list/pages/post.dart';
 
 import 'package:list/pages/user.dart';
+import 'package:list/pages/post.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/users',
       routes: {
-        '/users': (_) => UserPage(),
+        '/users': (_) => const UserPage(),
         '/post': (_) => const PostPage(),
       },
     );
